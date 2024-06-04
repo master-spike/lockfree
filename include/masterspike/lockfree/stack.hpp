@@ -25,6 +25,21 @@ class stack {
 public:
     stack() = default;
 
+    stack(stack<T> const&) = delete;
+    stack(stack<T>&&) = delete;
+    stack& operator=(stack<T> const&) = delete;
+    stack& operator=(stack<T>&&) = delete;
+    ~stack() {
+        detail::stack_node<T>* ptr = m_top.load(std::memory_order_seq_cst);
+        while (ptr != nullptr) {
+            auto* qtr = ptr->m_next.load(std::memory_order_relaxed);
+            retire_pointer<detail::stack_node<T>>(ptr, [](auto ptr) {
+                delete ptr;
+            });
+            ptr = qtr;
+        }
+    }
+
     void push(T&& t) {
         detail::stack_node<T>* new_node = new detail::stack_node<T>(std::forward<T>(t));
         push_node(new_node);
