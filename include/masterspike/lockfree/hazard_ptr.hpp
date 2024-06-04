@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+#include <array>
 #include <set>
 #include <atomic>
 #include <functional>
@@ -104,8 +106,8 @@ private:
             ++jt; ++num_removed;
         }
 
-        std::remove_if(m_retired.begin(), retired_end, [](auto const& p) {
-            return p.first == nullptr;
+        std::partition(m_retired.begin(), retired_end, [](auto const& p) {
+            return p.first != nullptr;
         });
         m_size -= num_removed;
     }
