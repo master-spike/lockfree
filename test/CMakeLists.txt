@@ -1,0 +1,2 @@
+add_executable(hazard_ptr_test hazard_ptr_test.cpp)
+add_executable(stack_test stack_test.cpp)
